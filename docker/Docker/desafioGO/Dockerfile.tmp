@@ -1,0 +1,5 @@
+FROM golang:alpine
+
+COPY desafiogo.go .
+
+CMD [ "go", "run", "main"]

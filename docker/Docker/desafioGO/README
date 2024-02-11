@@ -1,0 +1,10 @@
+Docker Hub
+
+## Link:
+https://hub.docker.com/repository/docker/danubio/golang-app
+
+
+To push a new tag to this repository
+docker pull danubio/golang-app:latest
+
+docker push danubio/golang-app:tagname
