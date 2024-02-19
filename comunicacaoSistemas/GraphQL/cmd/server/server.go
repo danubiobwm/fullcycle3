@@ -8,9 +8,9 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/devfullcycle/13-GraphQL/graph"
-	"github.com/devfullcycle/13-GraphQL/graph/generated"
-	"github.com/devfullcycle/13-GraphQL/internal/database"
+	"github.com/danubiobwm/fullcycle3/comunicacaoSistemas/GraphQL/graph"
+	"github.com/danubiobwm/fullcycle3/comunicacaoSistemas/GraphQL/generated"
+	"github.com/danubiobwm/fullcycle3/comunicacaoSistemas/GraphQL/internal/database"
 	_ "github.com/mattn/go-sqlite3"
 )
 

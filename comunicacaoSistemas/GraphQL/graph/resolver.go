@@ -1,6 +1,6 @@
 package graph
 
-import "github.com/devfullcycle/13-GraphQL/internal/database"
+import "github.com/danubiobwm/fullcycle3/comunicacaoSistemas/GraphQL/internal/database"
 
 // This file will not be regenerated automatically.
 //

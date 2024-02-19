@@ -6,8 +6,8 @@ package graph
 import (
 	"context"
 
-	"github.com/devfullcycle/13-GraphQL/graph/generated"
-	"github.com/devfullcycle/13-GraphQL/graph/model"
+	"github.com/danubiobwm/fullcycle3/comunicacaoSistemas/GraphQL/graph/generated"
+	"github.com/danubiobwm/fullcycle3/comunicacaoSistemas/GraphQL/graph/model"
 )
 
 // Courses is the resolver for the courses field.
