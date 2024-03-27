@@ -1,52 +1,164 @@
-import { Address } from '../value-object/address'
-import { Customer } from './customer'
+import { makeAddressSut } from '../value-object/__mocks__/address-factory'
+import { makeCustomerSut } from './__mocks__/customer-factory'
+import {
+  AddressMandatoryToActivate,
+  MissingCustomerId,
+  MissingCustomerName
+} from './customer-errors'
 
-describe('Customer', () => {
-  it('should throw an error if id is empty', () => {
-    expect(() => new Customer('', 'John Doe')).toThrow('Id is required')
+describe('Customer Entity', () => {
+  test('Should create Entity without errors', () => {
+    const { sut } = makeCustomerSut()
+
+    expect(sut).toBeTruthy()
   })
 
-  it('should throw an error if name is empty', () => {
-    expect(() => new Customer('1', '')).toThrow('Name is required')
+  test('Should get id', () => {
+    const { sut } = makeCustomerSut({ id: 'custom_id' })
+
+    expect(sut.id).toEqual('custom_id')
   })
 
-  it('should change name', () => {
-    const customer = new Customer('1', 'John Doe')
-    customer.changeName('Jane Doe')
-    expect(customer.name).toBe('Jane Doe')
+  test('Should get name', () => {
+    const { sut } = makeCustomerSut({ name: 'custom_name' })
+
+    expect(sut.name).toEqual('custom_name')
   })
 
-  it('should active customer', () => {
-    const customer = new Customer('1', 'John Doe')
-    customer.address = new Address({
-      street: 'Main Street',
-      number: 1920,
-      city: 'New York',
-      state: 'New York',
-      zip: '10044',
-    })
-    customer.activate()
-    expect(customer.isActive).toBe(true)
+  test('Should get rewardPoints', () => {
+    const { sut } = makeCustomerSut({ rewardPoints: 1234 })
+
+    expect(sut.rewardPoints).toEqual(1234)
   })
 
-  it('should deactivate customer', () => {
-    const customer = new Customer('1', 'John Doe')
-    customer.deactivate()
-    expect(customer.isActive).toBe(false)
+  test('Should get Address', () => {
+    const customAddress = makeAddressSut().sut
+    const { sut } = makeCustomerSut({ address: customAddress })
+
+    expect(sut.address).toEqual(customAddress)
   })
 
-  it('should throw an error if address is not set and activate is called', () => {
-    const customer = new Customer('1', 'John Doe')
-    expect(() => customer.activate()).toThrow(
-      'Address is required to activate customer'
+  test('Should set Address', () => {
+    const customAddress = makeAddressSut({
+      street: 'custom_street',
+      city: 'custom_city',
+      number: 1234,
+      zip: 'custom_zip'
+    }).sut
+
+    const secondCustomAddress = makeAddressSut({
+      street: 'second_custom_street',
+      city: 'second_custom_city',
+      number: 12340000,
+      zip: 'second_custom_zip'
+    }).sut
+
+    const { sut } = makeCustomerSut({ address: customAddress })
+
+    expect(sut.address.city).toEqual('custom_city')
+    expect(sut.address.number).toEqual(1234)
+    expect(sut.address.street).toEqual('custom_street')
+    expect(sut.address.zip).toEqual('custom_zip')
+
+    sut.address = secondCustomAddress
+
+    expect(sut.address.city).toEqual('second_custom_city')
+    expect(sut.address.number).toEqual(12340000)
+    expect(sut.address.street).toEqual('second_custom_street')
+    expect(sut.address.zip).toEqual('second_custom_zip')
+  })
+
+  test('Should changeAddress', () => {
+    const customAddress = makeAddressSut({
+      street: 'custom_street',
+      city: 'custom_city',
+      number: 1234,
+      zip: 'custom_zip'
+    }).sut
+
+    const secondCustomAddress = makeAddressSut({
+      street: 'second_custom_street',
+      city: 'second_custom_city',
+      number: 12340000,
+      zip: 'second_custom_zip'
+    }).sut
+
+    const { sut } = makeCustomerSut({ address: customAddress })
+
+    expect(sut.address.city).toEqual('custom_city')
+    expect(sut.address.number).toEqual(1234)
+    expect(sut.address.street).toEqual('custom_street')
+    expect(sut.address.zip).toEqual('custom_zip')
+
+    sut.changeAddress(secondCustomAddress)
+
+    expect(sut.address.city).toEqual('second_custom_city')
+    expect(sut.address.number).toEqual(12340000)
+    expect(sut.address.street).toEqual('second_custom_street')
+    expect(sut.address.zip).toEqual('second_custom_zip')
+  })
+
+  test('Should return isActive', () => {
+    const { sut } = makeCustomerSut()
+
+    expect(sut.isActive()).toEqual(false)
+  })
+
+  test('Should activate', () => {
+    const { sut } = makeCustomerSut()
+
+    expect(sut.isActive()).toEqual(false)
+
+    sut.activate()
+
+    expect(sut.isActive()).toEqual(true)
+  })
+
+  test('Should deactivate', () => {
+    const { sut } = makeCustomerSut({ active: true })
+
+    expect(sut.isActive()).toEqual(true)
+
+    sut.deactivate()
+
+    expect(sut.isActive()).toEqual(false)
+  })
+
+  test('Should addRewardPoints', () => {
+    const { sut } = makeCustomerSut({ rewardPoints: 0 })
+
+    sut.addRewardPoints(2)
+    sut.addRewardPoints(3)
+    sut.addRewardPoints(5)
+
+    expect(sut.rewardPoints).toBe(10)
+  })
+
+  test('Should changeName', () => {
+    const { sut } = makeCustomerSut({ name: 'custom_name' })
+
+    expect(sut.name).toBe('custom_name')
+
+    sut.changeName('second_custom_name')
+
+    expect(sut.name).toBe('second_custom_name')
+  })
+
+  test('Should throw when id missing', () => {
+    expect(() => makeCustomerSut({ id: null })).toThrowError(
+      new MissingCustomerId()
     )
   })
 
-  it('should add rewarded points', () => {
-    const customer = new Customer('1', 'John Doe')
-    expect(customer.rewardedPoints).toBe(0)
-    customer.addRewardPoints(100)
-    expect(customer.rewardedPoints).toBe(100)
-    customer.addRewardPoints(10)
+  test('Should throw when name missing', () => {
+    expect(() => makeCustomerSut({ name: null })).toThrowError(
+      new MissingCustomerName()
+    )
+  })
+
+  test('Should throw when activate without address', () => {
+    const { sut } = makeCustomerSut({ address: null })
+
+    expect(() => sut.activate()).toThrowError(new AddressMandatoryToActivate())
   })
 })

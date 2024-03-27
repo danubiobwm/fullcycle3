@@ -1,66 +1,60 @@
-type AddressConstructorParams = {
-  street: string
-  number: number
-  city: string
-  state: string
-  zip: string
+import {
+  MissingCustomerCity,
+  MissingCustomerNumber,
+  MissingCustomerStreet,
+  MissingCustomerZip
+} from './address-errors'
+
+type Street = string
+type AddressNumber = number
+type Zip = string
+type City = string
+
+export interface AddressParams {
+  street: Street
+  number: AddressNumber
+  zip: Zip
+  city: City
 }
 
 export class Address {
-  _street: string
-  _number: number
-  _city: string
-  _state: string
-  _zip: string
+  private readonly _street: Street = ''
+  private readonly _number: AddressNumber = null
+  private readonly _zip: Zip = ''
+  private readonly _city: City = ''
 
-  constructor({ street, number, city, state, zip }: AddressConstructorParams) {
+  constructor ({ street, number, zip, city }: AddressParams) {
     this._street = street
     this._number = number
-    this._city = city
-    this._state = state
     this._zip = zip
+    this._city = city
     this.validate()
   }
 
-  get street() {
+  get street (): Street {
     return this._street
   }
 
-  get number() {
+  get number (): AddressNumber {
     return this._number
   }
 
-  get city() {
-    return this._city
-  }
-
-  get state() {
-    return this._state
-  }
-
-  get zip() {
+  get zip (): Zip {
     return this._zip
   }
 
-  validate() {
-    if (!this._street) {
-      throw new Error('Street is required')
-    }
-    if (!this._number) {
-      throw new Error('Number is required')
-    }
-    if (!this._city) {
-      throw new Error('City is required')
-    }
-    if (!this._state) {
-      throw new Error('State is required')
-    }
-    if (!this._zip) {
-      throw new Error('Zip is required')
-    }
+  get city (): City {
+    return this._city
   }
 
-  toString() {
-    return `${this._street}, ${this._number} - ${this._city}/${this._state} - ${this._zip}`
+  validate (): void {
+    if (!this._street) throw new MissingCustomerStreet()
+    if (!this._number) throw new MissingCustomerNumber()
+    if (!this._zip) throw new MissingCustomerZip()
+    if (!this._city) throw new MissingCustomerCity()
+  }
+
+  toString (): string {
+    return `${this._street}, ${this._number}, ${this._zip} ${this._city}`
   }
 }

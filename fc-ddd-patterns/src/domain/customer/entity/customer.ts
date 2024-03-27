@@ -1,72 +1,91 @@
-import { Address } from '../value-object/address'
+import { Address as AddressValueObject } from '../value-object/address'
+import {
+  AddressMandatoryToActivate,
+  MissingCustomerId,
+  MissingCustomerName
+} from './customer-errors'
+
+type Id = string
+type Name = string
+type Address = AddressValueObject
+type Active = boolean
+type RewardPoints = number
+
+export interface CustomerParams {
+  id: Id
+  name: Name
+  address?: Address
+  active: Active
+  rewardPoints: RewardPoints
+}
 
 export class Customer {
-  private _id: string
-  private _name: string
+  private readonly _id: Id
+  private _name: Name = ''
   private _address?: Address
-  private _isActive: boolean = false
-  private _rewardedPoints: number = 0
+  private _active: Active = false
+  private _rewardPoints: RewardPoints = 0
 
-  constructor(id: string, name: string) {
+  constructor ({ id, name, address, active, rewardPoints }: CustomerParams) {
     this._id = id
     this._name = name
-    this.validate()
-  }
-
-  validate() {
-    if (this._id.length <= 0) {
-      throw new Error('Id is required')
-    }
-    if (this._name.length <= 0) {
-      throw new Error('Name is required')
-    }
-  }
-
-  changeName(name: string) {
-    this._name = name
-    this.validate()
-  }
-
-  changeAddress(address: Address) {
     this._address = address
+    this._active = active
+    this._rewardPoints = rewardPoints
+    this.validate()
   }
 
-  activate() {
-    if (!this._address) {
-      throw new Error('Address is required to activate customer')
-    }
-    this._isActive = true
-  }
-
-  deactivate() {
-    this._isActive = false
-  }
-
-  addRewardPoints(points: number) {
-    this._rewardedPoints += points
-  }
-
-  get id(): string {
+  get id (): Id {
     return this._id
   }
 
-  get rewardedPoints(): number {
-    return this._rewardedPoints
-  }
-
-  get name(): string {
+  get name (): Name {
     return this._name
   }
 
-  get isActive(): boolean {
-    return this._isActive
-  }
-
-  get address(): Address {
+  get address (): Address {
     return this._address
   }
 
-  set address(address: Address) {
+  get rewardPoints (): RewardPoints {
+    return this._rewardPoints
+  }
+
+  set address (address: Address) {
     this._address = address
+  }
+
+  changeAddress (address: Address): void {
+    this._address = address
+  }
+
+  changeName (name: Name): void {
+    this._name = name
+    this.validate()
+  }
+
+  activate (): void {
+    if (this._address === null) {
+      throw new AddressMandatoryToActivate()
+    }
+
+    this._active = true
+  }
+
+  deactivate (): void {
+    this._active = false
+  }
+
+  isActive (): boolean {
+    return this._active
+  }
+
+  addRewardPoints (rewardPoints: RewardPoints): void {
+    this._rewardPoints += rewardPoints
+  }
+
+  validate (): void {
+    if (!this._id) throw new MissingCustomerId()
+    if (!this._name) throw new MissingCustomerName()
   }
 }

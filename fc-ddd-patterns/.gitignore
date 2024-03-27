@@ -1,2 +1,5 @@
 node_modules
+.swc
 dist
+coverage
+.DS_Store
