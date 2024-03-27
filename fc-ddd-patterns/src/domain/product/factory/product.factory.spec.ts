@@ -1,27 +1,27 @@
-import ProductFactory from "./product.factory";
+import { ProductFactory } from './product.factory'
 
-describe("Product factory unit test", () => {
-  it("should create a proct type a", () => {
-    const product = ProductFactory.create("a", "Product A", 1);
+describe('Product Factory', () => {
+  it('should create a product type A', () => {
+    const product = ProductFactory.create('A', 'Product A', 100)
 
-    expect(product.id).toBeDefined();
-    expect(product.name).toBe("Product A");
-    expect(product.price).toBe(1);
-    expect(product.constructor.name).toBe("Product");
-  });
+    expect(product.id).toBeDefined()
+    expect(product.name).toBe('Product A')
+    expect(product.price).toBe(100)
+    expect(product.constructor.name).toBe('Product')
+  })
 
-  it("should create a proct type b", () => {
-    const product = ProductFactory.create("b", "Product B", 1);
+  it('should create a product type B', () => {
+    const product = ProductFactory.create('B', 'Product B', 100)
 
-    expect(product.id).toBeDefined();
-    expect(product.name).toBe("Product B");
-    expect(product.price).toBe(2);
-    expect(product.constructor.name).toBe("ProductB");
-  });
+    expect(product.id).toBeDefined()
+    expect(product.name).toBe('Product B')
+    expect(product.price).toBe(100 * 2)
+    expect(product.constructor.name).toBe('ProductB')
+  })
 
-  it("should throw an error when product type is not supported", () => {
-    expect(() => ProductFactory.create("c", "Product C", 1)).toThrowError(
-      "Product type not supported"
-    );
-  });
-});
+  it('should throw an error when type is invalid', () => {
+    expect(() => ProductFactory.create('C' as any, 'Product C', 100)).toThrow(
+      'Invalid product type'
+    )
+  })
+})

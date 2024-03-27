@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize-typescript";
-import Customer from "../../../../domain/customer/entity/customer";
-import Address from "../../../../domain/customer/value-object/address";
+import { Customer } from "../../../../domain/customer/entity/customer";
+import { Address } from "../../../../domain/customer/value-object/address";
 import CustomerModel from "./customer.model";
 import CustomerRepository from "./customer.repository";
 
@@ -27,7 +27,7 @@ describe("Customer repository test", () => {
     const customerRepository = new CustomerRepository();
     const customer = new Customer("123", "Customer 1");
     const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
-    customer.Address = address;
+    customer.address = address;
     await customerRepository.create(customer);
 
     const customerModel = await CustomerModel.findOne({ where: { id: "123" } });

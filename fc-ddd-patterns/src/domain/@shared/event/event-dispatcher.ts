@@ -1,40 +1,46 @@
-import EventDispatcherInterface from "./event-dispatcher.interface";
-import EventHandlerInterface from "./event-handler.interface";
-import eventInterface from "./event.interface";
+import { th } from '@faker-js/faker'
+import EventDispatcherInterface from './event-dispatcher.interface'
+import { EventHandlerInterface } from './event-handler.interface'
+import { EventInterface } from './event.interface'
 
-export default class EventDispatcher implements EventDispatcherInterface {
-  private eventHandlers: { [eventName: string]: EventHandlerInterface[] } = {};
+export class EventDispatcher implements EventDispatcherInterface {
+  private handlers: Record<string, EventHandlerInterface<EventInterface>[]> = {}
 
-  get getEventHandlers(): { [eventName: string]: EventHandlerInterface[] } {
-    return this.eventHandlers;
+  get eventHandlers(): Record<string, EventHandlerInterface<EventInterface>[]> {
+    return this.handlers
   }
 
-  register(eventName: string, eventHandler: EventHandlerInterface): void {
-    if (!this.eventHandlers[eventName]) {
-      this.eventHandlers[eventName] = [];
+  notify(event: EventInterface): void {
+    const eventName = event.constructor.name
+    const eventHandlers = this.handlers[eventName]
+    if (!eventHandlers) {
+      return
     }
-    this.eventHandlers[eventName].push(eventHandler);
+    eventHandlers.forEach(handler => handler.handle(event))
   }
 
-  unregister(eventName: string, eventHandler: EventHandlerInterface): void {
-    if (this.eventHandlers[eventName]) {
-      const index = this.eventHandlers[eventName].indexOf(eventHandler);
-      if (index !== -1) {
-        this.eventHandlers[eventName].splice(index, 1);
-      }
+  register(
+    eventName: string,
+    handler: EventHandlerInterface<EventInterface>
+  ): void {
+    if (!this.handlers[eventName]) {
+      this.handlers[eventName] = []
+    }
+    this.handlers[eventName].push(handler)
+  }
+
+  unregister(
+    eventName: string,
+    handler: EventHandlerInterface<EventInterface>
+  ): void {
+    const eventHandlers = this.handlers[eventName]
+    const index = eventHandlers.indexOf(handler)
+    if (index !== -1) {
+      eventHandlers.splice(index, 1)
     }
   }
 
   unregisterAll(): void {
-    this.eventHandlers = {};
-  }
-
-  notify(event: eventInterface): void {
-    const eventName = event.constructor.name;
-    if (this.eventHandlers[eventName]) {
-      this.eventHandlers[eventName].forEach((eventHandler) => {
-        eventHandler.handle(event);
-      });
-    }
+    this.handlers = {}
   }
 }
