@@ -1,60 +1,66 @@
-import {
-  MissingCustomerCity,
-  MissingCustomerNumber,
-  MissingCustomerStreet,
-  MissingCustomerZip
-} from './address-errors'
-
-type Street = string
-type AddressNumber = number
-type Zip = string
-type City = string
-
-export interface AddressParams {
-  street: Street
-  number: AddressNumber
-  zip: Zip
-  city: City
+type AddressConstructorParams = {
+  street: string
+  number: number
+  city: string
+  state: string
+  zip: string
 }
 
 export class Address {
-  private readonly _street: Street = ''
-  private readonly _number: AddressNumber = null
-  private readonly _zip: Zip = ''
-  private readonly _city: City = ''
+  _street: string
+  _number: number
+  _city: string
+  _state: string
+  _zip: string
 
-  constructor ({ street, number, zip, city }: AddressParams) {
+  constructor({ street, number, city, state, zip }: AddressConstructorParams) {
     this._street = street
     this._number = number
-    this._zip = zip
     this._city = city
+    this._state = state
+    this._zip = zip
     this.validate()
   }
 
-  get street (): Street {
+  get street() {
     return this._street
   }
 
-  get number (): AddressNumber {
+  get number() {
     return this._number
   }
 
-  get zip (): Zip {
-    return this._zip
-  }
-
-  get city (): City {
+  get city() {
     return this._city
   }
 
-  validate (): void {
-    if (!this._street) throw new MissingCustomerStreet()
-    if (!this._number) throw new MissingCustomerNumber()
-    if (!this._zip) throw new MissingCustomerZip()
-    if (!this._city) throw new MissingCustomerCity()
+  get state() {
+    return this._state
   }
 
-  toString (): string {
-    return `${this._street}, ${this._number}, ${this._zip} ${this._city}`
+  get zip() {
+    return this._zip
+  }
+
+  validate() {
+    if (!this._street) {
+      throw new Error('Street is required')
+    }
+    if (!this._number) {
+      throw new Error('Number is required')
+    }
+    if (!this._city) {
+      throw new Error('City is required')
+    }
+    if (!this._state) {
+      throw new Error('State is required')
+    }
+    if (!this._zip) {
+      throw new Error('Zip is required')
+    }
+  }
+
+  toString() {
+    return `${this._street}, ${this._number} - ${this._city}/${this._state} - ${this._zip}`
   }
 }

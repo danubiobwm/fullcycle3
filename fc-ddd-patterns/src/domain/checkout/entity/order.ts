@@ -1,56 +1,50 @@
-import { OrderItem } from '../value-object/order-item'
-import {
-  MissingOrderCustomerId,
-  MissingOrderId,
-  MissingOrderItems,
-  NotEnoughOrderItems
-} from './order-errors'
-
-type Id = string
-type CustomerId = string
-type Items = OrderItem[]
-
-export interface OrderParams {
-  id: Id
-  customerId: CustomerId
-  items: OrderItem[]
-}
+import { OrderItem } from './order-item'
 
 export class Order {
-  private readonly _id: Id
-  private readonly _customerId: CustomerId
-  private readonly _items: Items
+  private _id: string
+  private _customerId: string
+  private _items: OrderItem[]
 
-  constructor ({ id, customerId, items }: OrderParams) {
+  constructor(id: string, customerId: string, items: OrderItem[]) {
     this._id = id
     this._customerId = customerId
     this._items = items
     this.validate()
   }
 
-  get id (): Id {
-    return this._id
-  }
-
-  get customerId (): CustomerId {
-    return this._customerId
-  }
-
-  get items (): Items {
-    return this._items
-  }
-
-  validate (): void {
-    if (!this._id) throw new MissingOrderId()
-    if (!this._customerId) throw new MissingOrderCustomerId()
-    if (!this._items) throw new MissingOrderItems()
-
+  validate() {
+    if (this._id.length <= 0) {
+      throw new Error('Id is required')
+    }
+    if (this._customerId.length <= 0) {
+      throw new Error('Customer id is required')
+    }
     if (this._items.length <= 0) {
-      throw new NotEnoughOrderItems()
+      throw new Error('Items are required')
     }
   }
 
-  total (): number {
-    return this._items.reduce((acc, item) => acc + item.price, 0)
+  get id(): string {
+    return this._id
+  }
+
+  total(): number {
+    return this._items.reduce((acc, item) => acc + item.getTotal(), 0)
+  }
+
+  get customerId(): string {
+    return this._customerId
+  }
+
+  get items(): OrderItem[] {
+    return this._items
+  }
+
+  addItem(item: OrderItem) {
+    this._items.push(item)
+  }
+
+  removeItem(id: string) {
+    this._items = this._items.filter(item => item.id !== id)
   }
 }
