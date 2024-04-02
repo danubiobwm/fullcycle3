@@ -6,10 +6,12 @@ import { SendConsoleLogWhenCustomerChangedAddressHandler } from './handler/custo
 
 describe('Customer Changed Address Event', () => {
   it('should notify event handlers about the event', () => {
+    // Arrange
     const eventDispatcher = new EventDispatcher()
     const eventHandler = new SendConsoleLogWhenCustomerChangedAddressHandler()
     const spyEventHandler = jest.spyOn(eventHandler, 'handle')
     eventDispatcher.register('CustomerChangedAddressEvent', eventHandler)
+
     const customer = new Customer('1', 'John Doe')
     const address = new Address({
       street: 'Main St.',
@@ -18,9 +20,13 @@ describe('Customer Changed Address Event', () => {
       state: 'São Paulo',
       zip: '01000-000',
     })
+
+    // Act
     customer.changeAddress(address)
     const event = new CustomerChangedAddressEvent(customer)
     eventDispatcher.notify(event)
+
+    // Assert
     expect(spyEventHandler).toHaveBeenCalledTimes(1)
   })
 })
