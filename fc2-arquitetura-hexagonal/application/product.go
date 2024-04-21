@@ -48,7 +48,7 @@ const (
 )
 
 type Product struct {
-	ID     string  `valid:"uuidv4"`
+	ID     string  `valid:"uuid4"`
 	Name   string  `valid:"required"`
 	Price  float64 `valid:"float,optional"`
 	Status string  `valid:"required"`
