@@ -1,24 +1,16 @@
-
 import ProductRepositoryInterface from '../../../domain/product/repository/product-repository.interface';
-import { ListProductOutputDto } from './list.product.dto';
+import { InputListProductDto, OutputListProductDto } from './list.product.dto';
+import { ListProductMapper } from './list.product.mapper';
 
-export class ListProductUseCase {
+export default class ListProductUseCase {
   private productRepository: ProductRepositoryInterface;
-
-  constructor(productRepository: ProductRepositoryInterface) {
-    this.productRepository = productRepository;
+  constructor(ProductRepository: ProductRepositoryInterface) {
+    this.productRepository = ProductRepository;
   }
 
-  async execute(): Promise<ListProductOutputDto> {
+  async execute(input: InputListProductDto = {}): Promise<OutputListProductDto> {
     const products = await this.productRepository.findAll();
 
-    return {
-      products: products.map(product => ({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        createdAt: product.createdAt,
-      })),
-    };
+    return ListProductMapper.toOutput(products);
   }
 }

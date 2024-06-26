@@ -1,25 +1,23 @@
 import Product from '../../../domain/product/entity/product';
+import ProductFactory from '../../../domain/product/factory/product.factory';
 import ProductRepositoryInterface from '../../../domain/product/repository/product-repository.interface';
-import { CreateProductInputDto, CreateProductOutputDto } from './create.product.dto';
-import { v4 as uuidv4 } from 'uuid'; // Para gerar IDs únicos
+import { InputCreateProductDto, OutputCreateProductDto } from './create.product.dto';
+import { ProductTypeNotSupportedException } from '../../../domain/product/exception/product-type-not-supported.exception';
+import CreateProductMapper from './create.product.mapper';
 
-export class CreateProductUseCase {
+export default class CreateProductUseCase {
   private productRepository: ProductRepositoryInterface;
 
   constructor(productRepository: ProductRepositoryInterface) {
     this.productRepository = productRepository;
   }
 
-  async execute(input: CreateProductInputDto): Promise<CreateProductOutputDto> {
-    const id = uuidv4(); // Gera um ID único
-    const product = new Product(id, input.name, input.price);
+  async execute(input: InputCreateProductDto): Promise<OutputCreateProductDto> {
+    if (input.type === 'b') throw new ProductTypeNotSupportedException()
+
+    const product = ProductFactory.create(input.type, input.name, input.price) as Product ;
     await this.productRepository.create(product);
 
-    return {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      createdAt: new Date(), // Adicionando a data de criação
-    };
+    return CreateProductMapper.toOutputDto(product);
   }
 }

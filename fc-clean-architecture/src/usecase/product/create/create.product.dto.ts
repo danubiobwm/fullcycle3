@@ -1,11 +1,11 @@
-export interface CreateProductInputDto {
-  name: string;
-  price: number;
+export interface InputCreateProductDto {
+    name: string;
+    price: number;
+    type: 'a' | 'b';
 }
 
-export interface CreateProductOutputDto {
-  id: string;
-  name: string;
-  price: number;
-  createdAt: Date;
+export interface OutputCreateProductDto {
+    id: string;
+    name: string;
+    price: number;
 }

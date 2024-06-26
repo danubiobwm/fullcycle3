@@ -1,12 +1,11 @@
-export interface UpdateProductInputDto {
-  id: string;
-  name?: string;
-  price?: number;
+export class InputUpdateProductDto {
+    id: string;
+    name: string;
+    price: number;
 }
 
-export interface UpdateProductOutputDto {
-  id: string;
-  name: string;
-  price: number;
-  createdAt: Date;
+export class OutputUpdateProductDto {
+    id: string;
+    name: string;
+    price: number;
 }

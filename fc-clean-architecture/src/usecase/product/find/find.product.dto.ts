@@ -1,10 +1,9 @@
-export interface FindProductInputDto {
-  id: string;
+export interface InputFindProductDto {
+    id: string;
 }
 
-export interface FindProductOutputDto {
-  id: string;
-  name: string;
-  price: number;
-  createdAt: Date;
+export interface OutputFindProductDto {
+    id: string;
+    name: string;
+    price: number;
 }
