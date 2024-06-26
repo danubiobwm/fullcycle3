@@ -4,21 +4,27 @@ import ProductModel from "./product.model";
 import ProductRepository from "./product.repository";
 
 describe("Product repository test", () => {
-  let sequileze: Sequelize;
+  let sequelize: Sequelize;
 
   beforeEach(async () => {
-    sequileze = new Sequelize({
+    sequelize = new Sequelize({
       dialect: "sqlite",
       storage: ":memory:",
       logging: false,
       sync: { force: true },
     });
-    sequileze.addModels([ProductModel]);
-    await sequileze.sync();
+    sequelize.addModels([ProductModel]);
+    await sequelize.sync();
   });
 
   afterEach(async () => {
-    await sequileze.close();
+    await sequelize.close();
+  });
+
+  const toPlainObject = (product: Product) => ({
+    id: product.id,
+    name: product.name,
+    price: product.price,
   });
 
   it("should create a product", async () => {
@@ -74,10 +80,10 @@ describe("Product repository test", () => {
 
     const foundProduct = await productRepository.find("1");
 
-    expect(productModel.toJSON()).toStrictEqual({
-      id: foundProduct.id,
-      name: foundProduct.name,
-      price: foundProduct.price,
+    expect(toPlainObject(foundProduct)).toStrictEqual({
+      id: productModel.id,
+      name: productModel.name,
+      price: productModel.price,
     });
   });
 
@@ -90,9 +96,8 @@ describe("Product repository test", () => {
     await productRepository.create(product2);
 
     const foundProducts = await productRepository.findAll();
-    const products = [product, product2];
+    const products = [product, product2].map(toPlainObject);
 
-    expect(products).toEqual(foundProducts);    
+    expect(foundProducts.map(toPlainObject)).toEqual(products);
   });
-  
 });
