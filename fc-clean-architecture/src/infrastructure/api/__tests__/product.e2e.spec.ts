@@ -58,4 +58,48 @@ describe('E2E test for product', () => {
     expect(text).toContain('</product>');
     expect(text).toContain('</products>');
   });
+
+  it('should create a new product', async () => {
+    const newProduct = {
+      name: 'Product 2',
+      price: 199,
+      type: 'a',
+    };
+
+    const { status, body } = await request(app).post('/products').send(newProduct);
+
+    expect(status).toBe(201);
+    expect(body).toStrictEqual({
+      id: expect.any(String),
+      name: newProduct.name,
+      price: newProduct.price,
+      type: newProduct.type,
+    });
+  });
+
+  it('should update an existing product', async () => {
+    // Create the product first
+    const newProduct = {
+      id: '123',
+      name: 'Product 1',
+      price: 99.99,
+    };
+    await repository.create(newProduct as any);
+
+    const createdProduct = await ProductModel.findOne({ where: { id: '123' } });
+
+    const updatedProduct = {
+      name: 'Updated Product',
+      price: 299.99,
+    };
+
+    const { status, body } = await request(app).put(`/products/${createdProduct.id}`).send(updatedProduct);
+
+    expect(status).toBe(200);
+    expect(body).toStrictEqual({
+      id: createdProduct.id,
+      name: updatedProduct.name,
+      price: updatedProduct.price,
+    });
+  });
 });
