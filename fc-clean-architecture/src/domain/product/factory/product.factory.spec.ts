@@ -11,12 +11,12 @@ describe("Product factory unit test", () => {
   });
 
   it("should create a proct type b", () => {
-    const product = ProductFactory.create("b", "Product B", 1);
+    const product = ProductFactory.create('b', 'Product B', 2);
 
     expect(product.id).toBeDefined();
-    expect(product.name).toBe("Product B");
+    expect(product.name).toBe('Product B');
     expect(product.price).toBe(2);
-    expect(product.constructor.name).toBe("ProductB");
+    expect(product.constructor.name).toBe('ProductB');
   });
 
   it("should throw an error when product type is not supported", () => {

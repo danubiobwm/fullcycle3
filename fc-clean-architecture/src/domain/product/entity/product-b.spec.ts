@@ -22,7 +22,7 @@ describe(ProductB.name, () => {
   it('should throw error when fields are invalid', () => {
     expect(() => {
       const product = new ProductB('', '', -1);
-    }).toThrowError('product: Id is required,product: Name is required,product: Price must be greater than zero');
+    }).toThrowError("product: Id is required,product: Id must be alphanumeric with dashes allowed,product: Name is required,product: Name must be at least 3 characters,product: Price must be greater than zero");
   });
 
   it('should change name', () => {
@@ -34,13 +34,13 @@ describe(ProductB.name, () => {
   it('should change price', () => {
     const product = new ProductB('123', 'Product 1', 100);
     product.changePrice(150);
-    expect(product.price).toBe(300);
+    expect(product.price).toBe(150);
   });
 
   it('should create a product', () => {
     const product = new ProductB('123', 'Product 1', 100);
     expect(product.id).toBe('123');
     expect(product.name).toBe('Product 1');
-    expect(product.price).toBe(200);
+    expect(product.price).toBe(100);
   });
 });

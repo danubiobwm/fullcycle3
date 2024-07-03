@@ -22,7 +22,7 @@ describe(Product.name, () => {
   it('should throw error when fields are invalid', () => {
     expect(() => {
       const product = new Product('', '', -1);
-    }).toThrowError('product: Id is required,product: Name is required,product: Price must be greater than zero');
+    }).toThrowError("product: Id is required,product: Id must be alphanumeric with dashes allowed,product: Name is required,product: Name must be at least 3 characters,product: Price must be greater than zero");
   });
 
   it('should change name', () => {
