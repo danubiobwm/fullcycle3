@@ -10,9 +10,9 @@ export default class ProductBaseYupValidator
       yup
         .object()
         .shape({
-          id: yup.string().required('Id is required'),
-          name: yup.string().required('Name is required'),
-          price: yup.number().min(0, 'Price must be greater than zero'),
+          id: yup.string().required('Id is required').matches(/^[a-zA-Z0-9\-]+$/, 'Id must be alphanumeric with dashes allowed'),
+    name: yup.string().required('Name is required').min(3, 'Name must be at least 3 characters').max(50, 'Name must be at most 50 characters'),
+    price: yup.number().required('Price is required').min(0, 'Price must be greater than zero'),
         })
         .validateSync(
           {
