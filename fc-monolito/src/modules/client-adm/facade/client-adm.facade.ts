@@ -3,7 +3,7 @@ import ClientAdmFacadeInterface, {
   AddClientFacadeInputDto,
   FindClientFacadeInputDto,
   FindClientFacadeOutputDto,
-} from "./client-adm.facade.interface.dto";
+} from "./client-adm.facade.interface";
 
 export interface UseCaseProps {
   findUsecase: UseCaseInterface;
