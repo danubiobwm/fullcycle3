@@ -1,90 +1,50 @@
-import Id from "../../@shared/domain/value-object/id.value-object";
-import Client from "../domain/client.entity";
+import { ClientModel } from "../../client-adm/repository/client.model";
+import CatalogProductModel from "../../store-catalog/repository/product.model";
 import Order from "../domain/order.entity";
 import CheckoutGateway from "../gateway/checkout.gateway";
-import ClientOrder from "./client.order.model";
-import OrderModel from "./order.model";
-import ProductOrder from "./product.order.model";
+import { OrderModel } from "./order.model";
 
-export default class OrderRepository implements CheckoutGateway{
-
-    async addOrder(order: Order): Promise<Order> {
-
-        const products = order.products.map((p) => {
-            return {
-                id: p.id.id,
-                name: p.name,
-                salesPrice: p.salesPrice,
-            }
-        })
-        try {
-            await OrderModel.create({
-                id: order.id.id,
-                client: {
-                   id: order.client.id.id,
-                   name: order.client.name,
-                   document: order.client.document,
-                   email: order.client.email
-                },
-                products: products
-           }, 
-           {
-               include: [ ClientOrder, ProductOrder ]
-           });
-        } catch (error) {
-            console.log(error);
-            throw error
+export default class OrderRepository implements CheckoutGateway {
+    async addOrder(order: Order): Promise<void> {
+        const client = {
+            id: order.client.id.id,
+            name: order.client.name,
+            email: order.client.email,
+            document: order.client.document,
+            street: order.client.street,
+            number: order.client.number,
+            complement: order.client.complement,
+            city: order.client.city,
+            state: order.client.state,
+            zipCode: order.client.zipCode,
+            createdAt: order.client.createdAt,
+            updatedAt: order.client.updatedAt
         }
-        
-        const result = await OrderModel.findOne(
-            {where: {id: order.id.id}, include: [{model: ClientOrder}, {model: ProductOrder}]});
-        const orderBD = result.dataValues
-        const clientBD = orderBD.client.dataValues;
-        const productsBD = orderBD.products
-        const productsRes = productsBD.map((p: { id: string; name: any; salesPrice: any; }) => {
-            return {
-                id: new Id(p.id),
-                name: p.name,
-                salesPrice: p.salesPrice
-            }
+        const products = order.products.map((p) => ({
+            id: p.id.id,
+            name: p.name,
+            description: p.description,
+            salesPrice: p.salesPrice,
+            createdAt: p.createdAt,
+            updatedAt: p.updatedAt
+        }))
+        await OrderModel.create({
+            id: order.id.id,
+            client,
+            products,
+            status: order.status,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        },
+        {
+        include: [
+            { model: ClientModel },
+            { model: CatalogProductModel }
+        ],
         })
-        const client = new Client({
-            id: new Id(clientBD.id),
-            name: clientBD.name,
-            document: clientBD.document,
-            email: clientBD.email
-        })
-        return new Order({
-            id: new Id(orderBD.id),
-            client: client,
-            products: productsRes
-        })
+    }
+    findOrder(id: string): Promise<Order> {
+        throw new Error("Method not implemented.");
     }
 
-    async findOrder(id: string): Promise<Order> {
-        const result = await OrderModel.findOne(
-            {where: {id: id}, include: ['client', 'products']});
-        const orderBD = result.dataValues
-        const clientBD = orderBD.client.dataValues;
-        const productsBD = orderBD.products
-        const productsRes = productsBD.map((p: { id: string; name: any; salesPrice: any; }) => {
-            return {
-                id: new Id(p.id),
-                name: p.name,
-                salesPrice: p.salesPrice
-            }
-        })
-        const client = new Client({
-            id: new Id(clientBD.id),
-            name: clientBD.name,
-            document: clientBD.document,
-            email: clientBD.email
-        })
-        return new Order({
-            id: new Id(orderBD.id),
-            client: client,
-            products: productsRes
-        })
-    }
-    
 }

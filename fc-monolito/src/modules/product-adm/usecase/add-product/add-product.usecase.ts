@@ -6,8 +6,8 @@ import { AddProductInputDto, AddProductOutputDto } from "./add-product.dto";
 export default class AddProductUseCase {
   private _productRepository: ProductGateway;
 
-  constructor(productRepository: ProductGateway) {
-    this._productRepository = productRepository;
+  constructor(_productRepository: ProductGateway) {
+    this._productRepository = _productRepository;
   }
 
   async execute(input: AddProductInputDto): Promise<AddProductOutputDto> {
@@ -20,12 +20,8 @@ export default class AddProductUseCase {
     };
 
     const product = new Product(props);
-    try {
-      await this._productRepository.add(product);
-    } catch (error) {
-      console.error('Erro ao salvar o produto:', error);
-      throw error; // ou trate o erro de alguma forma adequada para o contexto
-    }
+    this._productRepository.add(product);
+
     return {
       id: product.id.id,
       name: product.name,

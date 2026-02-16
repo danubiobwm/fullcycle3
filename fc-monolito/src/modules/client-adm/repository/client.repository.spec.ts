@@ -1,8 +1,9 @@
 import { Sequelize } from "sequelize-typescript";
 import Id from "../../@shared/domain/value-object/id.value-object";
+import { OrderModel } from "../../checkout/repository/order.model";
+import CatalogProductModel from "../../store-catalog/repository/product.model";
 import Client from "../domain/client.entity";
-import AddressClientDto from "../domain/value-object/address-client.dto";
-import ClientModel from "./client.model";
+import { ClientModel } from "./client.model";
 import ClientRepository from "./client.repository";
 
 describe("ClientRepository test", () => {
@@ -16,7 +17,7 @@ describe("ClientRepository test", () => {
       sync: { force: true },
     });
 
-    await sequelize.addModels([ClientModel]);
+    await sequelize.addModels([ClientModel, OrderModel, CatalogProductModel]);
     await sequelize.sync();
   });
 
@@ -29,8 +30,13 @@ describe("ClientRepository test", () => {
       id: new Id("1"),
       name: "Client 1",
       email: "x@x.com",
-      document:"doc",
-      address: new AddressClientDto('street', '1', 'city', 'zipcode', 'state', 'complement'),
+      document: "123",
+      street: "Street 1",
+      number: "1",
+      complement: "Complement 1",
+      city: "City 1",
+      state: "State 1",
+      zipCode: "123",
     });
 
     const repository = new ClientRepository();
@@ -42,7 +48,13 @@ describe("ClientRepository test", () => {
     expect(clientDb.id).toBe(client.id.id);
     expect(clientDb.name).toBe(client.name);
     expect(clientDb.email).toBe(client.email);
-    expect(clientDb.document).toBe(client.document);
+    expect(clientDb.document).toEqual(client.document);
+    expect(clientDb.street).toEqual(client.street);
+    expect(clientDb.number).toEqual(client.number);
+    expect(clientDb.complement).toEqual(client.complement);
+    expect(clientDb.city).toEqual(client.city);
+    expect(clientDb.state).toEqual(client.state);
+    expect(clientDb.zipCode).toEqual(client.zipCode);
     expect(clientDb.createdAt).toStrictEqual(client.createdAt);
     expect(clientDb.updatedAt).toStrictEqual(client.updatedAt);
   });
@@ -52,13 +64,13 @@ describe("ClientRepository test", () => {
       id: "1",
       name: "Client 1",
       email: "x@x.com",
-      document:"doc",
-      street: 'street',
-      state: 'state',
-      complement: 'complement',
-      zipCode: 'zipcode',
-      number: '2',
-      city: 'city',
+      document: "123",
+      street: "street 1",
+      number: "1",
+      complement: "",
+      city: "São Paulo",
+      state: "SP",
+      zipCode: "1234567890",
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -70,6 +82,12 @@ describe("ClientRepository test", () => {
     expect(result.name).toEqual(client.name);
     expect(result.email).toEqual(client.email);
     expect(result.document).toEqual(client.document);
+    expect(result.street).toEqual(client.street);
+    expect(result.number).toEqual(client.number);
+    expect(result.complement).toEqual(client.complement);
+    expect(result.city).toEqual(client.city);
+    expect(result.state).toEqual(client.state);
+    expect(result.zipCode).toEqual(client.zipCode);
     expect(result.createdAt).toStrictEqual(client.createdAt);
     expect(result.updatedAt).toStrictEqual(client.updatedAt);
   });

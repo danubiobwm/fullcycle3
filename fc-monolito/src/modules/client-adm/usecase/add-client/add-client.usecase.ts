@@ -15,24 +15,38 @@ export default class AddClientUseCase {
 
   async execute(input: AddClientInputDto): Promise<AddClientOutputDto> {
     const props = {
-      id: new Id(input.id.id),
+      id: new Id(input.id) || new Id(),
       name: input.name,
       email: input.email,
       document: input.document,
-      address: input.address,
+      street: input.street,
+      number: input.number,
+      complement: input.complement,
+      city: input.city,
+      state: input.state,
+      zipCode: input.zipCode,
     };
 
     const client = new Client(props);
-    this._clientRepository.add(client);
+    try {
+      await this._clientRepository.add(client);
 
-    return {
-      id: client.id.id,
-      name: client.name,
-      email: client.email,
-      document: client.document,
-      address: client.address,
-      createdAt: client.createdAt,
-      updatedAt: client.updatedAt,
-    };
+      return {
+        id: client.id.id,
+        name: client.name,
+        email: client.email,
+        document: client.document,
+        street: client.street,
+        number: client.number,
+        complement: client.complement,
+        city: client.city,
+        state: client.state,
+        zipCode: client.zipCode,
+        createdAt: client.createdAt,
+        updatedAt: client.updatedAt,
+      };
+    } catch (e) {
+      console.error({ e })
+    }
   }
 }
