@@ -31,3 +31,25 @@ func TestNewClientValidation(t *testing.T) {
 	assert.Nil(t, client, "Expected client to be nil for invalid input")
 	assert.Error(t, err, "Expected error for invalid input")
 }
+
+func TestUpdateClient(t *testing.T) {
+	client, err := NewClient("John Doe", "john@example.com")
+	if err != nil {
+		t.Fatalf("Failed to create client: %v", err)
+	}
+
+	err = client.Update("Jane Doe", "jane@example.com")
+	if err != nil {
+		t.Fatalf("Failed to update client: %v", err)
+	}
+
+	assert.Equal(t, "Jane Doe", client.Name, "Expected updated client name")
+	assert.Equal(t, "jane@example.com", client.Email, "Expected updated client email")
+}
+
+func TestUpdateClientWithInvalidArgs(t *testing.T) {
+	client, _ := NewClient("John Doe", "j@.com")
+	err := client.Update("", "j@.com")
+	assert.Error(t, err, "name is required")
+
+}
