@@ -53,3 +53,11 @@ func TestUpdateClientWithInvalidArgs(t *testing.T) {
 	assert.Error(t, err, "name is required")
 
 }
+
+func TestAddAccount(t *testing.T) {
+	client, _ := NewClient("John Doe", "j@.com")
+	account := NewAccount(client)
+	err := client.AddAccount(account)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(client.Accounts), "Expected one account to be added")
+}
